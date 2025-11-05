@@ -960,7 +960,77 @@ Authorization: Bearer {admin_token}
 
 ---
 
-## 9. 공통 API
+## 9. 챗봇 API
+
+### 9.1 챗봇 메시지 전송
+
+#### POST /api/chat
+
+**설명**: Google Gemini API를 사용하여 사용자의 질문에 AI 응답을 제공합니다.
+
+**헤더**
+```
+Content-Type: application/json
+```
+
+**요청 본문**
+```json
+{
+  "message": "중고차 구매 시 주의사항이 뭔가요?",
+  "history": [
+    {
+      "role": "user",
+      "content": "안녕하세요"
+    },
+    {
+      "role": "assistant",
+      "content": "안녕하세요! 쑤카 AI 상담입니다. 무엇을 도와드릴까요?"
+    }
+  ]
+}
+```
+
+**요청 파라미터**
+- `message` (string, 필수): 사용자 질문 (1-500자)
+- `history` (array, 선택): 이전 대화 내역
+  - `role`: "user" | "assistant"
+  - `content`: 메시지 내용
+
+**응답** (200 OK)
+```json
+{
+  "success": true,
+  "data": {
+    "response": "중고차 구매 시 다음 사항들을 주의하시면 좋습니다:\n\n1. 차량 사고 이력 확인\n2. 정기 점검 내역 확인\n3. 주행거리 확인\n4. 차량 등록증 확인\n5. 시승 후 구매 결정"
+  }
+}
+```
+
+**에러 응답** (400 Bad Request)
+```json
+{
+  "success": false,
+  "error": {
+    "code": "VALIDATION_ERROR",
+    "message": "메시지는 1자 이상 500자 이하여야 합니다."
+  }
+}
+```
+
+**에러 응답** (500 Internal Server Error)
+```json
+{
+  "success": false,
+  "error": {
+    "code": "CHAT_ERROR",
+    "message": "챗봇 응답 생성 중 오류가 발생했습니다."
+  }
+}
+```
+
+---
+
+## 10. 공통 API
 
 ### 9.1 제조사 목록 조회
 
@@ -1011,7 +1081,7 @@ Authorization: Bearer {admin_token}
 
 ---
 
-## 10. 에러 코드
+## 11. 에러 코드
 
 | 코드 | 설명 |
 |------|------|
@@ -1023,6 +1093,7 @@ Authorization: Bearer {admin_token}
 | `INVALID_CREDENTIALS` | 잘못된 인증 정보 |
 | `TOKEN_EXPIRED` | 토큰 만료 |
 | `RATE_LIMIT_EXCEEDED` | 요청 제한 초과 |
+| `CHAT_ERROR` | 챗봇 응답 생성 오류 |
 | `INTERNAL_ERROR` | 서버 내부 에러 |
 
 ---

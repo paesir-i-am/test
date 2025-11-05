@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { prisma } from '@/lib/prisma';
 import { Vehicle } from '@/types/vehicle';
+import Chatbot from '@/components/chat/Chatbot';
 
 async function getVehicles() {
   try {
@@ -34,20 +35,20 @@ async function getVehicles() {
         manufacturer_id: vehicle.model.manufacturer_id,
         name: vehicle.model.name,
       },
-      detail_model_name: vehicle.detail_model_name,
+      detail_model_name: vehicle.detail_model_name || undefined,
       year: vehicle.year,
       mileage: vehicle.mileage,
       price: parseInt(vehicle.price),
       fuel_type: vehicle.fuel_type as Vehicle['fuel_type'],
       transmission: vehicle.transmission as Vehicle['transmission'],
-      color: vehicle.color,
+      color: vehicle.color || undefined,
       region: vehicle.region,
       options: vehicle.options ? JSON.parse(vehicle.options) : [],
       accident_history: vehicle.accident_history,
-      accident_details: vehicle.accident_details,
-      repair_history: vehicle.repair_history,
-      description: vehicle.description,
-      vehicle_number: vehicle.vehicle_number,
+      accident_details: vehicle.accident_details || undefined,
+      repair_history: vehicle.repair_history || undefined,
+      description: vehicle.description || undefined,
+      vehicle_number: vehicle.vehicle_number || undefined,
       status: vehicle.status as Vehicle['status'],
       view_count: vehicle.view_count,
       thumbnail_image: vehicle.images[0]?.image_url,
@@ -134,6 +135,9 @@ export default async function HomePage() {
           </div>
         )}
       </section>
+
+      {/* 챗봇 */}
+      <Chatbot />
     </div>
   );
 }
