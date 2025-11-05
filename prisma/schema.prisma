@@ -1,0 +1,228 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  buyer
+  seller
+  both
+  admin
+}
+
+enum UserStatus {
+  active
+  suspended
+  deleted
+}
+
+enum FuelType {
+  gasoline
+  diesel
+  hybrid
+  electric
+  lpg
+}
+
+enum TransmissionType {
+  manual
+  automatic
+}
+
+enum VehicleStatus {
+  pending
+  approved
+  sold
+  rejected
+  deleted
+}
+
+enum InquiryStatus {
+  pending
+  replied
+}
+
+model User {
+  id              Int         @id @default(autoincrement())
+  email           String      @unique
+  password        String
+  name            String
+  phone           String?
+  address         String?
+  role            UserRole    @default(buyer)
+  profile_image_url String?
+  status          UserStatus  @default(active)
+  last_login_at   DateTime?
+  created_at      DateTime    @default(now())
+  updated_at      DateTime    @updatedAt
+
+  // Relations
+  vehicles        Vehicle[]
+  favorites       Favorite[]
+  inquiries_sent  Inquiry[]    @relation("BuyerInquiries")
+  inquiries_received Inquiry[] @relation("SellerInquiries")
+  announcements  Announcement[]
+
+  @@index([email])
+  @@index([role])
+  @@index([status])
+  @@map("users")
+}
+
+model Manufacturer {
+  id              Int       @id @default(autoincrement())
+  name            String    @unique
+  name_en         String?
+  logo_url        String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Relations
+  models          Model[]
+  vehicles        Vehicle[]
+
+  @@index([name])
+  @@map("manufacturers")
+}
+
+model Model {
+  id              Int       @id @default(autoincrement())
+  manufacturer_id Int
+  name            String
+  name_en         String?
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+
+  // Relations
+  manufacturer    Manufacturer @relation(fields: [manufacturer_id], references: [id])
+  vehicles        Vehicle[]
+
+  @@unique([manufacturer_id, name])
+  @@index([manufacturer_id])
+  @@index([name])
+  @@map("models")
+}
+
+model Vehicle {
+  id                Int               @id @default(autoincrement())
+  seller_id         Int
+  manufacturer_id   Int
+  model_id          Int
+  detail_model_name String?
+  year              Int
+  mileage           Int
+  price             String            // SQLite doesn't have DECIMAL, using String
+  fuel_type         FuelType
+  transmission      TransmissionType
+  color             String?
+  region            String
+  options           String?           // JSON string
+  accident_history  Boolean           @default(false)
+  accident_details  String?
+  repair_history    String?
+  description       String?
+  vehicle_number    String?
+  status            VehicleStatus     @default(pending)
+  view_count        Int               @default(0)
+  created_at        DateTime          @default(now())
+  updated_at        DateTime          @updatedAt
+
+  // Relations
+  seller            User              @relation(fields: [seller_id], references: [id])
+  manufacturer      Manufacturer       @relation(fields: [manufacturer_id], references: [id])
+  model             Model             @relation(fields: [model_id], references: [id])
+  images            VehicleImage[]
+  favorites         Favorite[]
+  inquiries         Inquiry[]
+
+  @@index([seller_id])
+  @@index([manufacturer_id])
+  @@index([model_id])
+  @@index([status])
+  @@index([created_at])
+  @@map("vehicles")
+}
+
+model VehicleImage {
+  id              Int       @id @default(autoincrement())
+  vehicle_id      Int
+  image_url       String
+  image_order     Int       @default(0)
+  is_thumbnail    Boolean   @default(false)
+  created_at      DateTime  @default(now())
+
+  // Relations
+  vehicle         Vehicle   @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+
+  @@index([vehicle_id])
+  @@map("vehicle_images")
+}
+
+model Favorite {
+  id              Int       @id @default(autoincrement())
+  user_id         Int
+  vehicle_id      Int
+  created_at      DateTime  @default(now())
+
+  // Relations
+  user            User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  vehicle         Vehicle   @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+
+  @@unique([user_id, vehicle_id])
+  @@index([user_id])
+  @@index([vehicle_id])
+  @@map("favorites")
+}
+
+model Inquiry {
+  id              BigInt        @id @default(autoincrement())
+  vehicle_id      Int
+  buyer_id        Int
+  seller_id       Int
+  title           String
+  content         String
+  reply           String?
+  reply_at        DateTime?
+  status          InquiryStatus @default(pending)
+  created_at      DateTime      @default(now())
+  updated_at      DateTime      @updatedAt
+
+  // Relations
+  vehicle         Vehicle       @relation(fields: [vehicle_id], references: [id], onDelete: Cascade)
+  buyer           User          @relation("BuyerInquiries", fields: [buyer_id], references: [id], onDelete: Cascade)
+  seller          User          @relation("SellerInquiries", fields: [seller_id], references: [id], onDelete: Cascade)
+
+  @@index([vehicle_id])
+  @@index([buyer_id])
+  @@index([seller_id])
+  @@index([status])
+  @@index([created_at])
+  @@map("inquiries")
+}
+
+model Announcement {
+  id              Int       @id @default(autoincrement())
+  admin_id        Int
+  title           String
+  content         String
+  is_pinned       Boolean   @default(false)
+  view_count      Int       @default(0)
+  created_at      DateTime  @default(now())
+  updated_at      DateTime  @updatedAt
+  deleted_at      DateTime?
+
+  // Relations
+  admin           User      @relation(fields: [admin_id], references: [id])
+
+  @@index([admin_id])
+  @@index([is_pinned])
+  @@index([created_at])
+  @@map("announcements")
+}
