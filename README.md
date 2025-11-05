@@ -1,86 +1,114 @@
 # 쑤카 (Sooka) - 중고차 판매 플랫폼
 
-기존 중고차 판매 플랫폼의 단점을 개선한 신뢰성 높은 중고차 거래 플랫폼입니다.
+신뢰할 수 있는 중고차 거래 플랫폼입니다.
 
-## 🚀 기술 스택
+## 🚀 프로젝트 개요
 
-- **Framework**: Next.js 14
-- **Language**: TypeScript
-- **Styling**: Tailwind CSS
+쑤카는 기존 중고차 판매 사이트의 단점을 개선하여 더 투명하고 신뢰할 수 있는 중고차 거래 환경을 제공하는 플랫폼입니다.
+
+## ✨ 주요 기능
+
+- ✅ 사용자 인증 (회원가입, 로그인)
+- ✅ 차량 목록 조회 및 검색
+- ✅ 차량 상세 정보
+- ✅ 반응형 디자인 (웹 & 모바일)
+- ✅ PWA 지원
+
+## 🛠️ 기술 스택
+
+- **Frontend**: Next.js 14, React, TypeScript
+- **Styling**: Tailwind CSS, shadcn/ui
+- **Database**: SQLite (개발), PostgreSQL (프로덕션 준비)
+- **ORM**: Prisma
 - **State Management**: Zustand
-- **Form**: React Hook Form + Zod
+- **Authentication**: JWT
 - **PWA**: next-pwa
 
-## 📋 주요 기능
-
-- 사용자 인증 (회원가입, 로그인)
-- 차량 등록 및 관리
-- 차량 검색 및 필터링
-- 찜하기 기능
-- 문의 기능
-- 관리자 기능
-- 반응형 웹 디자인 (모바일, 태블릿, 데스크톱)
-- PWA 지원
-
-## 🛠️ 개발 환경 설정
+## 📦 설치 및 실행
 
 ### 필수 요구사항
 
-- Node.js 18.x 이상
+- Node.js 18+ 
 - npm 또는 yarn
 
-### 설치 및 실행
+### 설치
 
 ```bash
 # 의존성 설치
 npm install
 
+# 데이터베이스 마이그레이션
+npm run db:migrate
+
+# 초기 데이터 추가
+npm run db:seed
+
 # 개발 서버 실행
 npm run dev
-
-# 프로덕션 빌드
-npm run build
-
-# 프로덕션 서버 실행
-npm start
 ```
 
-브라우저에서 [http://localhost:3000](http://localhost:3000)을 열어 확인하세요.
+브라우저에서 [http://localhost:3000](http://localhost:3000) 접속
 
-## 📁 프로젝트 구조
+## 📝 테스트 계정
+
+- **관리자**: admin@sooka.com / password123
+- **구매자**: buyer@test.com / password123
+- **판매자**: seller@test.com / password123
+
+## 🗂️ 프로젝트 구조
 
 ```
-sooka/
-├── app/                  # Next.js App Router
-│   ├── (auth)/          # 인증 관련 페이지
-│   ├── (dashboard)/     # 대시보드 페이지
-│   ├── vehicles/        # 차량 관련 페이지
-│   └── layout.tsx       # 루트 레이아웃
-├── components/          # 재사용 가능한 컴포넌트
-│   ├── common/         # 공통 컴포넌트
-│   ├── vehicle/        # 차량 관련 컴포넌트
-│   └── layout/        # 레이아웃 컴포넌트
-├── lib/                # 유틸리티 함수
-├── hooks/              # Custom Hooks
-├── store/              # Zustand 스토어
-├── types/              # TypeScript 타입 정의
-└── public/             # 정적 파일
+sharingCar/
+├── app/                    # Next.js 앱 라우터
+│   ├── api/               # API 라우트
+│   ├── auth/              # 인증 페이지
+│   └── vehicles/          # 차량 페이지
+├── components/            # React 컴포넌트
+│   ├── layout/           # 레이아웃 컴포넌트
+│   ├── ui/               # UI 컴포넌트 (shadcn/ui)
+│   └── vehicle/          # 차량 관련 컴포넌트
+├── docs/                  # 프로젝트 문서
+├── lib/                   # 유틸리티 함수
+├── prisma/               # Prisma 스키마 및 마이그레이션
+├── public/               # 정적 파일
+│   └── images/          # 이미지 파일
+└── types/                # TypeScript 타입 정의
 ```
 
 ## 📚 문서
 
-자세한 내용은 `docs/` 폴더의 문서를 참고하세요.
+프로젝트 관련 상세 문서는 `docs/` 폴더를 참고하세요:
 
-- 프로젝트 개요서
-- 요구사항 정의서
-- 기능 명세서
-- 데이터베이스 설계서
-- API 명세서
-- UI/UX 디자인 가이드라인
-- 개발 환경 설정 가이드
-- 테스트 계획서
+- `01_프로젝트_개요서.md` - 프로젝트 개요 및 목표
+- `02_요구사항_정의서.md` - 기능 요구사항
+- `03_기능_명세서.md` - 상세 기능 명세
+- `04_데이터베이스_설계서.md` - 데이터베이스 구조
+- `05_API_명세서.md` - API 엔드포인트
+- `06_UI_UX_디자인_가이드라인.md` - 디자인 시스템
+- `07_개발_환경_설정_가이드.md` - 개발 환경 설정
+- `08_테스트_계획서.md` - 테스트 계획
+
+## 🗄️ 데이터베이스
+
+### 개발 환경 (SQLite)
+
+```bash
+# Prisma Studio 실행 (데이터베이스 GUI)
+npm run db:studio
+```
+
+### 프로덕션 환경 (PostgreSQL)
+
+프로덕션에서는 PostgreSQL을 사용하도록 설정하세요:
+
+1. `prisma/schema.prisma`에서 `provider = "postgresql"`로 변경
+2. `.env` 파일에 PostgreSQL 연결 문자열 추가
+3. 마이그레이션 실행
 
 ## 📄 라이선스
 
-프로젝트 내부 사용
+이 프로젝트는 개인 프로젝트입니다.
 
+## 👥 기여
+
+이슈나 개선사항이 있으면 GitHub Issues에 등록해주세요.
